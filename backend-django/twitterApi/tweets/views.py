@@ -1,9 +1,18 @@
-import random
-
 from django.http import HttpResponse, JsonResponse, Http404
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
+from .forms import TweetForm
 from .models import Tweet
+
+
+def tweet_create_view(request, *args, **kwargs):
+    form = TweetForm(request.POST or None)
+    if form.is_valid():
+        obj = form.save()
+        if request.is_ajax():
+            return JsonResponse(obj.serialize(), status=201);
+        return redirect("/")
+    return render(request, "common/form.html", context={"form": form})
 
 
 def home_view(request, *args, **kwargs):
@@ -12,7 +21,7 @@ def home_view(request, *args, **kwargs):
 
 def tweet_list_view(request, *args, **kwargs):
     qs = Tweet.objects.all()
-    tweet_list = [{"id": x.id, "content": x.content, "likes": random.randint(0, 150)} for x in qs]
+    tweet_list = [x.serialize() for x in qs]
     data = {
         "response": tweet_list
     }
