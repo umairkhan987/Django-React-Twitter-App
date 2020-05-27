@@ -12,8 +12,9 @@
         <div class="col-md-4 mx-auto col-10">
             <form class="form" id="tweet-create-from" action="/create-tweet" method="post">
                 {% csrf_token %}
+                <div class="d-none alert alert-danger" id="create-tweet-form-error"></div>
                 <input type="hidden" value="/" name="next">
-                <textarea class="form-control" name="content" placeholder="share your thought"></textarea>
+                <textarea required="required" class="form-control" name="content" placeholder="share your thought"></textarea>
                 <button type="submit" class="btn btn-primary mt-1">Tweet</button>
             </form>
         </div>
@@ -41,11 +42,35 @@
             xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
             xhr.onload = function () {
                 if(xhr.status === 201){
+                    handleTweetFormError("", false);
                     const newTweetJson = xhr.response;
                     const newTweetElement = formatTweetElement(newTweetJson);
                     const ogHtml = tweetsEl.innerHTML;
                     tweetsEl.innerHTML = newTweetElement + ogHtml;
+                    myform.reset();
                 }
+                else if (xhr.status === 400){
+                    const errorJson = xhr.response;
+                    const contentError = errorJson.content;
+                    if(contentError){
+                        let contentErrorMsg = contentError[0];
+                        if(contentErrorMsg){
+                            handleTweetFormError(contentErrorMsg, true);
+                        }else{
+                            alert("An error has occurred, please try again latter")
+                        }
+                    }
+                }
+                else if(xhr.status === 401){
+                    alert("You must login.");
+                    window.location.href = "/login";
+                }
+                else if (xhr.status === 500){
+                    alert("There is server error, please try again latter");
+                }
+            };
+            xhr.onerror = function(){
+                alert("An error occurred. please try again latter.");
             };
             xhr.send(myFormData);
         });
@@ -70,6 +95,16 @@
         }
 
         loadTweet(tweetsEl);
+
+        function handleTweetFormError(msg,display) {
+            const errorDivElement = document.getElementById("create-tweet-form-error");
+            if(display === true){
+                errorDivElement.setAttribute("class", "d-block alert alert-danger");
+                errorDivElement.innerText = msg;
+            }else{
+                errorDivElement.setAttribute("class", "d-none alert alert-danger");
+            }
+        }
 
         function handleLike(tweet_id, currentCount) {
             console.log("id = " + tweet_id);
