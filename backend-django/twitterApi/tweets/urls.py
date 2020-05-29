@@ -2,10 +2,9 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("", views.home_view, name="home"),
-    path("tweets", views.tweet_list_view, name="tweet_list"),
-    path("create-tweet", views.tweet_create_view, name="create_tweet"),
-    path("tweets/<int:id>", views.tweet_detail_view, name="tweet_detail"),
-    path("api/tweets/action", views.tweet_action_view, name="tweet_action"),
-    path("api/tweets/<int:id>/delete", views.tweet_delete_view, name="tweet_delete"),
+    path("", views.tweet_list_view, name="tweet_list"),
+    path("create", views.tweet_create_view, name="create_tweet"),
+    path("<int:id>", views.tweet_detail_view, name="tweet_detail"),
+    path("action", views.tweet_action_view, name="tweet_action"),
+    path("<int:id>/delete", views.tweet_delete_view, name="tweet_delete"),
 ]

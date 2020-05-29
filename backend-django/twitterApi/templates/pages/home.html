@@ -10,7 +10,7 @@
     {#  tweet form #}
     <div class="row mb-3">
         <div class="col-md-4 mx-auto col-10">
-            <form class="form" id="tweet-create-from" action="/create-tweet" method="post">
+            <form class="form" id="tweet-create-from" action="api/tweets/create" method="post">
                 {% csrf_token %}
                 <div class="d-none alert alert-danger" id="create-tweet-form-error"></div>
                 <input type="hidden" value="/" name="next">
@@ -79,7 +79,7 @@
         function loadTweet(tweetElement) {
             const xhr = new XMLHttpRequest();
             const method = "Get";
-            const url = "/tweets";
+            const url = "api/tweets";
 
             xhr.responseType = "json";
             xhr.open(method, url);

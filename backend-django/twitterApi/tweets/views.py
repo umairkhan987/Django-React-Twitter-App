@@ -7,13 +7,13 @@ from rest_framework.permissions import IsAuthenticated
 
 from .forms import TweetForm
 from .models import Tweet
-from .serializers import TweetSerializer, TweetActionSerializer
+from .serializers import TweetSerializer, TweetActionSerializer, TweetCreateSerializer
 
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def tweet_create_view(request, *args, **kwargs):
-    serializer = TweetSerializer(data=request.POST)
+    serializer = TweetCreateSerializer(data=request.POST)
     if serializer.is_valid(raise_exception=True):
         serializer.save(user=request.user)
         return Response(serializer.data, status=201)
@@ -43,7 +43,7 @@ def tweet_delete_view(request, id, *args, **kwargs):
         return Response({}, status=404)
     qs = qs.filter(user=request.user)
     if not qs.exists():
-        return Response({"message": "you cannot delete this tweet."}, status=401)
+        return Response({"message": "you cannot delete this tweet."}, status=404)
     obj = qs.first()
     obj.delete()
     return Response({"message": "Tweet successfully removed"}, status=200)
@@ -60,6 +60,7 @@ def tweet_action_view(request, *args, **kwargs):
         data = serializer.validated_data
         id = data.get("id")
         action = data.get("action")
+        content = data.get("content")
 
         qs = Tweet.objects.filter(id=id)
         if not qs.exists():
@@ -71,8 +72,12 @@ def tweet_action_view(request, *args, **kwargs):
             return Response(serializer.data, status=200)
         elif action == "unlike":
             obj.likes.remove(request.user)
+            serializer = TweetSerializer(obj)
+            return Response(serializer.data, status=200)
         elif action == "retweet":
-            pass
+            new_tweet = Tweet.objects.create(user=request.user, parent=obj, content=content)
+            serializer = TweetSerializer(new_tweet)
+            return Response(serializer.data, status=201)
     return Response({}, status=200)
 
 
