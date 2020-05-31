@@ -1,8 +1,10 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import TweetList from './components/TweetList';
 
 function App() {
+
   return (
     <div className="App">
       <header className="App-header">
@@ -10,6 +12,9 @@ function App() {
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
+        <div>
+          <TweetList />
+        </div>
         <a
           className="App-link"
           href="https://reactjs.org"
