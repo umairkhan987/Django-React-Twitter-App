@@ -21,7 +21,7 @@ const Tweet = (props) => {
   const { tweet, handleAction } = props;
 
   return (
-    <div className="my-5 py-5 border bg-white text-dark">
+    <div className="my-5 py-4 border bg-white text-dark">
       <p>
         {tweet.id} - {tweet.content}
       </p>
