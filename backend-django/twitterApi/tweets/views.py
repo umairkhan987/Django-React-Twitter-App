@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.http import HttpResponse, JsonResponse, Http404
 from django.shortcuts import render, redirect
 from rest_framework.decorators import api_view, permission_classes
@@ -13,7 +14,7 @@ from .serializers import TweetSerializer, TweetActionSerializer, TweetCreateSeri
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def tweet_create_view(request, *args, **kwargs):
-    serializer = TweetCreateSerializer(data=request.POST)
+    serializer = TweetCreateSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
         serializer.save(user=request.user)
         return Response(serializer.data, status=201)

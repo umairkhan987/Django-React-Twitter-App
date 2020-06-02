@@ -42,6 +42,8 @@
             xhr.setRequestHeader("HTTP_X_REQUESTED_WITH", "XMLHttpRequest");
             xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
             xhr.onload = function () {
+                console.log("status ", xhr.status);
+                console.log("response ", xhr.response);
                 if (xhr.status === 201) {
                     handleTweetFormError("", false);
                     const newTweetJson = xhr.response;

@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("", home_view, name="home"),
     path('api/tweets/', include('tweets.urls')),
+    path('api/auth/', include('accounts.urls')),
 ]
 
 if settings.DEBUG:
