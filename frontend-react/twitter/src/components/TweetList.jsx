@@ -2,12 +2,15 @@ import React, { Component } from "react";
 import Tweet from "./tweet";
 import TweetCreate from "./tweetCreate";
 
-import { getTweetsAxios, createTweetsAxios } from "./../services/tweetService";
+import {
+  getTweetsAxios,
+  createTweetsAxios,
+  tweetAction,
+} from "./../services/tweetService";
 
 class TweetList extends Component {
   state = {
     tweets: [],
-    userLike: false,
   };
 
   async componentDidMount() {
@@ -15,6 +18,7 @@ class TweetList extends Component {
     this.setState({ tweets });
   }
 
+  // create new Tweet method
   handleNewTweet = async (newTweet) => {
     try {
       const { data } = await createTweetsAxios({
@@ -30,20 +34,20 @@ class TweetList extends Component {
     }
   };
 
-  handleAction = (tweet, action) => {
-    if (action === "like") {
-      const allTweets = [...this.state.tweets];
-      const index = allTweets.indexOf(tweet);
-      allTweets[index] = { ...tweet };
-      if (this.state.userLike === true) {
-        allTweets[index].likes--;
-        this.setState({ userLike: false });
-      } else {
-        allTweets[index].likes++;
-        this.setState({ userLike: true });
-      }
-      this.setState({ tweets: allTweets });
+  // handle Action method (like, unlike and retweet)
+  handleAction = async (tweet, action) => {
+    const obj = { action: action, id: tweet.id };
+    const allTweets = [...this.state.tweets];
+    const index = allTweets.indexOf(tweet);
+    allTweets[index] = { ...tweet };
+    try {
+      const { data } = await tweetAction(obj);
+      console.log(data);
+      allTweets[index].likes = data.likes;
+    } catch (ex) {
+      console.log("like action error ", ex);
     }
+    this.setState({ tweets: allTweets });
   };
 
   render() {

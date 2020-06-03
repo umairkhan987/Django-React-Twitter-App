@@ -1,4 +1,4 @@
-import { getCurrentUser, getJwt } from "./authService";
+import { getJwt } from "./authService";
 import http from "./httpService";
 
 const endPoint = "http://localhost:8000/api/tweets";
@@ -6,11 +6,6 @@ const endPoint = "http://localhost:8000/api/tweets";
 
 // using axios third party to get list of tweets
 export function getTweetsAxios() {
-    // checkToken();
-
-    const result = getCurrentUser();
-    if (result) console.log(result);
-
     const response = http.get(endPoint);
     return response;
 }
@@ -18,13 +13,17 @@ export function getTweetsAxios() {
 // using axios third party to get list of tweets
 export async function createTweetsAxios(data) {
     const token = await getJwt();
-    const config = {
-        headers: { Authorization: `Bearer ${token}` }
-    };
-    const response = http.post(endPoint + "/create", data, config);
+    http.setJwt(token);
+    const response = http.post(endPoint + "/create", data);
     return response;
 }
 
+export async function tweetAction(data) {
+    const token = await getJwt();
+    http.setJwt(token);
+    const response = http.post(endPoint + "/action", data);
+    return response;
+}
 
 // using Ajax to get list of tweets
 export function getTweets(callBack) {
@@ -72,3 +71,8 @@ export function createTweet(newTweet, callBack) {
     }
     xhr.send(jsonData);
 }
+
+
+// const config = {
+    //     headers: { Authorization: `Bearer ${token}` }
+    // };
