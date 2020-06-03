@@ -8,6 +8,7 @@ class TweetCreate extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
     this.props.handleNewTweet(this.state.content);
+    this.setState({ content: "" });
   };
 
   handleChange = (e) => {

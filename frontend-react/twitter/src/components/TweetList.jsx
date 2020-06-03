@@ -1,62 +1,146 @@
-import React, { useState, useEffect } from "react";
-
+import React, { Component } from "react";
 import Tweet from "./tweet";
 import TweetCreate from "./tweetCreate";
-import { getTweets, createTweet } from "./../services/tweetService";
 
-const TweetList = () => {
-  const [tweets, setTweets] = useState([]);
-  const [userLike, setUserLike] = useState(false);
+import { getTweetsAxios, createTweetsAxios } from "./../services/tweetService";
 
-  const handleAction = (tweet, action) => {
-    if (action === "like") {
-      const allTweets = [...tweets];
-      const index = allTweets.indexOf(tweet);
-      allTweets[index] = { ...tweet };
-      if (userLike === true) {
-        allTweets[index].likes--;
-        setUserLike(false);
-      } else {
-        allTweets[index].likes++;
-        setUserLike(true);
+class TweetList extends Component {
+  state = {
+    tweets: [],
+    userLike: false,
+  };
+
+  async componentDidMount() {
+    const { data: tweets } = await getTweetsAxios();
+    this.setState({ tweets });
+  }
+
+  handleNewTweet = async (newTweet) => {
+    try {
+      const { data } = await createTweetsAxios({
+        content: newTweet,
+      });
+      const tweets = [data, ...this.state.tweets];
+      this.setState({ tweets });
+    } catch (ex) {
+      if (ex.response && ex.response.status === 401) {
+        alert("Unauthorized access");
+        console.log(ex.response);
       }
-
-      setTweets(allTweets);
     }
   };
 
-  const handleNewTweet = (newTweet) => {
-    const tempTweets = [...tweets];
-    // send data to server to create a new tweet
-    createTweet({ content: newTweet }, (response, status) => {
-      if (status === 201) {
-        tempTweets.unshift(response);
-        setTweets(tempTweets);
+  handleAction = (tweet, action) => {
+    if (action === "like") {
+      const allTweets = [...this.state.tweets];
+      const index = allTweets.indexOf(tweet);
+      allTweets[index] = { ...tweet };
+      if (this.state.userLike === true) {
+        allTweets[index].likes--;
+        this.setState({ userLike: false });
+      } else {
+        allTweets[index].likes++;
+        this.setState({ userLike: true });
       }
-    });
+      this.setState({ tweets: allTweets });
+    }
   };
 
-  useEffect(() => {
-    const myCallBack = (response, status) => {
-      if (status === 200) {
-        setTweets(response);
-      } else {
-        alert(response.message);
-      }
-    };
+  render() {
+    const { tweets } = this.state;
+    return (
+      <React.Fragment>
+        <TweetCreate handleNewTweet={this.handleNewTweet} />
 
-    getTweets(myCallBack);
-  }, []);
-
-  return (
-    <React.Fragment>
-      <TweetCreate handleNewTweet={handleNewTweet} />
-
-      {tweets.map((item, index) => {
-        return <Tweet tweet={item} handleAction={handleAction} key={index} />;
-      })}
-    </React.Fragment>
-  );
-};
+        {tweets.map((item, index) => {
+          return (
+            <Tweet tweet={item} handleAction={this.handleAction} key={index} />
+          );
+        })}
+      </React.Fragment>
+    );
+  }
+}
 
 export default TweetList;
+
+// const TweetList = () => {
+//   const [tweets, setTweets] = useState([]);
+//   const [userLike, setUserLike] = useState(false);
+
+//   const handleAction = (tweet, action) => {
+//     if (action === "like") {
+//       const allTweets = [...tweets];
+//       const index = allTweets.indexOf(tweet);
+//       allTweets[index] = { ...tweet };
+//       if (userLike === true) {
+//         allTweets[index].likes--;
+//         setUserLike(false);
+//       } else {
+//         allTweets[index].likes++;
+//         setUserLike(true);
+//       }
+
+//       setTweets(allTweets);
+//     }
+//   };
+
+//   const handleNewTweet = async (newTweet) => {
+//     // const tempTweets = [...tweets];
+
+//     // send data to server to create a new tweet using Axios
+//     try {
+//       const response = await createTweetsAxios({
+//         content: newTweet,
+//       });
+//       console.log(response);
+//     } catch (ex) {
+//       if (ex.response && ex.response.status === 401) {
+//         alert(ex.response.data["detail"]);
+//         console.log(ex.response);
+//       }
+//     }
+//     // send data to server to create a new tweet using Ajax
+//     // createTweet({ content: newTweet, username: "khan" }, (response, status) => {
+//     //   if (status === 201) {
+//     //     tempTweets.unshift(response);
+//     //     setTweets(tempTweets);
+//     //   }
+//     // });
+//   };
+
+//   // using axios third party to get list of tweets
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       const { data } = await getTweetsAxios();
+//       setTweets(data);
+//     };
+//     fetchData();
+//   }, []);
+
+//   // using ajax call to get data
+//   // useEffect(() => {
+//   //   const myCallBack = (response, status) => {
+//   //     console.log(response);
+//   //     console.log(status);
+//   //     if (status === 200) {
+//   //       setTweets(response);
+//   //     } else {
+//   //       alert(response.message);
+//   //     }
+//   //   };
+//   //   getTweets(myCallBack);
+//   // }, []);
+
+//   return (
+//     <React.Fragment>
+//       <TweetCreate handleNewTweet={handleNewTweet} />
+
+//       {tweets.map((item, index) => {
+//         return <Tweet tweet={item} handleAction={handleAction} key={index} />;
+//       })}
+//     </React.Fragment>
+//   );
+// };
+
+// export default TweetList;
