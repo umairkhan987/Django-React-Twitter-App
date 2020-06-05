@@ -1,12 +1,8 @@
 import React, { Component } from "react";
 import Tweet from "./tweet";
 import TweetCreate from "./tweetCreate";
-
-import {
-  getTweetsAxios,
-  createTweetsAxios,
-  tweetAction,
-} from "./../services/tweetService";
+import { tweetAction } from "./../services/tweetService";
+import { getTweetsList, createTweet } from "./../services/tweetService";
 
 class TweetList extends Component {
   state = {
@@ -14,14 +10,14 @@ class TweetList extends Component {
   };
 
   async componentDidMount() {
-    const { data: tweets } = await getTweetsAxios();
+    const { data: tweets } = await getTweetsList();
     this.setState({ tweets });
   }
 
   // create new Tweet method
   handleNewTweet = async (newTweet) => {
     try {
-      const { data } = await createTweetsAxios({
+      const { data } = await createTweet({
         content: newTweet,
       });
       const tweets = [data, ...this.state.tweets];
@@ -37,17 +33,26 @@ class TweetList extends Component {
   // handle Action method (like, unlike and retweet)
   handleAction = async (tweet, action) => {
     const obj = { action: action, id: tweet.id };
-    const allTweets = [...this.state.tweets];
-    const index = allTweets.indexOf(tweet);
-    allTweets[index] = { ...tweet };
+
     try {
-      const { data } = await tweetAction(obj);
+      const response = await tweetAction(obj);
+      const { data } = response;
       console.log(data);
-      allTweets[index].likes = data.likes;
+      if (response.status === 200) {
+        const allTweets = [...this.state.tweets];
+        const index = allTweets.indexOf(tweet);
+        allTweets[index] = { ...tweet };
+        allTweets[index].likes = data.likes;
+        this.setState({ tweets: allTweets });
+      } else if (response.status === 201) {
+        const allTweets = [data, ...this.state.tweets];
+        this.setState({ tweets: allTweets });
+      } else {
+        console.log(response);
+      }
     } catch (ex) {
       console.log("like action error ", ex);
     }
-    this.setState({ tweets: allTweets });
   };
 
   render() {
