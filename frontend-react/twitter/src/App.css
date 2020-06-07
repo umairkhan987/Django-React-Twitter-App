@@ -13,6 +13,10 @@
   }
 }
 
+.bg-tweetme {
+  background-color: #8e1f1f !important;
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;

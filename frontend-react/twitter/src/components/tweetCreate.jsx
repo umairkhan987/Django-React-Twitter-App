@@ -18,8 +18,8 @@ class TweetCreate extends Component {
 
   render() {
     return (
-      <div>
-        <div className="col-12 mb-3">
+      <div className="row mb-3 mt-1">
+        <div className="col-md-5 mx-auto">
           <form action="post" onSubmit={this.handleSubmit}>
             <textarea
               value={this.state.content}
@@ -27,6 +27,7 @@ class TweetCreate extends Component {
               className="form-control"
               name="content"
               rows="3"
+              placeholder="Share your thought"
             ></textarea>
             <button type="submit" className="btn btn-primary mt-1">
               Tweet

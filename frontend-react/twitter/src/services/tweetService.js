@@ -27,9 +27,8 @@ export async function tweetAction(data) {
     return response;
 }
 
-export async function tweetDetail(tweet_id) {
-    const response = http.get(endPoint + "/" + tweet_id);
-    return response;
+export function tweetDetail(tweet_id) {
+    return http.get(endPoint + "/" + tweet_id);
 }
 // using Ajax to get list of tweets
 // export function getTweets(callBack) {

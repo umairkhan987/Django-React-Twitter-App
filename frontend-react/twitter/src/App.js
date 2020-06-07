@@ -1,30 +1,27 @@
 import React from 'react';
-import logo from './logo.svg';
+import { Route, Switch } from "react-router-dom";
 import './App.css';
 import TweetList from './components/TweetList';
+import Login from './components/login';
+import TweetDetail from './components/tweetDetail';
+import NavBar from './components/navbar';
 
 function App() {
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <div>
-          <TweetList />
-        </div>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <React.Fragment>
+      <NavBar />
+      <div className="container">
+        <h1 className="text-center">Welcome to tweet me!</h1>
+        <Switch>
+          <Route path="/tweet/detail/:id" component={TweetDetail} />
+          {/* <Route path="/tweet-detail/:id" render={(props) => <TweetDetail {...props} />} /> */}
+          <Route path="/login" component={Login} />
+          <Route path="/" exact component={TweetList} />
+          {/* <Redirect from="/tweets" exact to="/" /> */}
+        </Switch>
+      </div>
+    </React.Fragment>
   );
 }
 

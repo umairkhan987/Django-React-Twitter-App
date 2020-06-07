@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import Tweet from "./tweet";
 import TweetCreate from "./tweetCreate";
-import { tweetAction } from "./../services/tweetService";
 import { getTweetsList, createTweet } from "./../services/tweetService";
 
 class TweetList extends Component {
@@ -31,28 +30,32 @@ class TweetList extends Component {
   };
 
   // handle Action method (like, unlike and retweet)
-  handleAction = async (tweet, action) => {
-    const obj = { action: action, id: tweet.id };
+  // handleAction = async (tweet, action) => {
+  //   const obj = { action: action, id: tweet.id };
 
-    try {
-      const response = await tweetAction(obj);
-      const { data } = response;
-      console.log(data);
-      if (response.status === 200) {
-        const allTweets = [...this.state.tweets];
-        const index = allTweets.indexOf(tweet);
-        allTweets[index] = { ...tweet };
-        allTweets[index].likes = data.likes;
-        this.setState({ tweets: allTweets });
-      } else if (response.status === 201) {
-        const allTweets = [data, ...this.state.tweets];
-        this.setState({ tweets: allTweets });
-      } else {
-        console.log(response);
-      }
-    } catch (ex) {
-      console.log("like action error ", ex);
-    }
+  //   try {
+  //     const response = await tweetAction(obj);
+  //     const { data } = response;
+  //     console.log(data);
+  //     if (response.status === 200) {
+  //       const allTweets = [...this.state.tweets];
+  //       const index = allTweets.indexOf(tweet);
+  //       allTweets[index] = { ...tweet };
+  //       allTweets[index].likes = data.likes;
+  //       this.setState({ tweets: allTweets });
+  //     } else if (response.status === 201) {
+  //       const allTweets = [data, ...this.state.tweets];
+  //       this.setState({ tweets: allTweets });
+  //     } else {
+  //       console.log(response);
+  //     }
+  //   } catch (ex) {
+  //     console.log("like action error ", ex);
+  //   }
+  // };
+  handleUpdateRetweet = (tweet) => {
+    const allTweets = [tweet, ...this.state.tweets];
+    this.setState({ tweets: allTweets });
   };
 
   render() {
@@ -60,12 +63,18 @@ class TweetList extends Component {
     return (
       <React.Fragment>
         <TweetCreate handleNewTweet={this.handleNewTweet} />
-
-        {tweets.map((item, index) => {
-          return (
-            <Tweet tweet={item} handleAction={this.handleAction} key={index} />
-          );
-        })}
+        <div className="row">
+          {tweets.map((item, index) => {
+            return (
+              <Tweet
+                tweet={item}
+                updateTweet={this.handleUpdateRetweet}
+                key={index}
+                hideLink
+              />
+            );
+          })}
+        </div>
       </React.Fragment>
     );
   }

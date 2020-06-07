@@ -5,7 +5,7 @@ const endPoint = "http://127.0.0.1:8000/api/auth/token";
 
 
 export async function setJwt() {
-    const { data } = await http.post(endPoint, { username: "adil", password: "khan1234" });
+    const { data } = await http.post(endPoint, { username: "khan", password: "12345" });
     localStorage.setItem("token", data.access);
     return data.access;
 }
