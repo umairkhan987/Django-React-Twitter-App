@@ -134,7 +134,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_URLS_REGEX = r'^/api/.*$'
 
 SIMPLE_JWT = {
-     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
 }
 
 DEFAULT_RENDERER_CLASSES = [

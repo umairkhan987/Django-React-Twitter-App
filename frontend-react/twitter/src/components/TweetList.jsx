@@ -23,36 +23,12 @@ class TweetList extends Component {
       this.setState({ tweets });
     } catch (ex) {
       if (ex.response && ex.response.status === 401) {
-        alert("Unauthorized access");
-        console.log(ex.response);
+        this.props.history.push("/login");
+        console.clear();
       }
     }
   };
 
-  // handle Action method (like, unlike and retweet)
-  // handleAction = async (tweet, action) => {
-  //   const obj = { action: action, id: tweet.id };
-
-  //   try {
-  //     const response = await tweetAction(obj);
-  //     const { data } = response;
-  //     console.log(data);
-  //     if (response.status === 200) {
-  //       const allTweets = [...this.state.tweets];
-  //       const index = allTweets.indexOf(tweet);
-  //       allTweets[index] = { ...tweet };
-  //       allTweets[index].likes = data.likes;
-  //       this.setState({ tweets: allTweets });
-  //     } else if (response.status === 201) {
-  //       const allTweets = [data, ...this.state.tweets];
-  //       this.setState({ tweets: allTweets });
-  //     } else {
-  //       console.log(response);
-  //     }
-  //   } catch (ex) {
-  //     console.log("like action error ", ex);
-  //   }
-  // };
   handleUpdateRetweet = (tweet) => {
     const allTweets = [tweet, ...this.state.tweets];
     this.setState({ tweets: allTweets });
@@ -67,6 +43,7 @@ class TweetList extends Component {
           {tweets.map((item, index) => {
             return (
               <Tweet
+                history={this.props.history}
                 tweet={item}
                 updateTweet={this.handleUpdateRetweet}
                 key={index}
@@ -81,6 +58,31 @@ class TweetList extends Component {
 }
 
 export default TweetList;
+
+// handle Action method (like, unlike and retweet)
+// handleAction = async (tweet, action) => {
+//   const obj = { action: action, id: tweet.id };
+
+//   try {
+//     const response = await tweetAction(obj);
+//     const { data } = response;
+//     console.log(data);
+//     if (response.status === 200) {
+//       const allTweets = [...this.state.tweets];
+//       const index = allTweets.indexOf(tweet);
+//       allTweets[index] = { ...tweet };
+//       allTweets[index].likes = data.likes;
+//       this.setState({ tweets: allTweets });
+//     } else if (response.status === 201) {
+//       const allTweets = [data, ...this.state.tweets];
+//       this.setState({ tweets: allTweets });
+//     } else {
+//       console.log(response);
+//     }
+//   } catch (ex) {
+//     console.log("like action error ", ex);
+//   }
+// };
 
 // const TweetList = () => {
 //   const [tweets, setTweets] = useState([]);

@@ -49,18 +49,19 @@ const Tweet = (props) => {
         updateTweet(response.data);
       }
     } catch (ex) {
-      console.log("error in tweet ", ex);
+      if (ex.response && ex.response.status === 401) {
+        props.history.push("/login");
+        console.clear();
+      }
     }
   };
+
   // my-5 py-4 border bg-white text-dark
   return (
-    <div className="col-12 col-md-10 mx-auto border rounded my-5 py-4">
+    <div className="col-12 col-md-10 mx-auto border rounded my-3 py-4">
       <div>
         {hideLink === true ? (
-          <Link
-            to={`/tweet/detail/${tweet.id}`}
-            style={{ textDecoration: "none" }}
-          >
+          <Link to={`/tweets/${tweet.id}`} style={{ textDecoration: "none" }}>
             <p>
               {tweet.id} - {tweet.content}
             </p>

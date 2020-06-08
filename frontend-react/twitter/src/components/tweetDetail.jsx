@@ -41,7 +41,9 @@ class TweetDetail extends Component {
   render() {
     return (
       <React.Fragment>
-        {this.state.tweet && <Tweet tweet={this.state.tweet} />}
+        {this.state.tweet && (
+          <Tweet tweet={this.state.tweet} history={this.props.history} />
+        )}
       </React.Fragment>
     );
   }

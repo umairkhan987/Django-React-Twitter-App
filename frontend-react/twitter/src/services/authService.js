@@ -3,55 +3,34 @@ import JwtDecode from "jwt-decode";
 
 const endPoint = "http://127.0.0.1:8000/api/auth/token";
 
+// http.setJwt(localStorage.getItem("token"));
 
-export async function setJwt() {
-    const { data } = await http.post(endPoint, { username: "khan", password: "12345" });
+export async function login(username, password) {
+    const { data } = await http.post(endPoint, { username: username, password: password });
     localStorage.setItem("token", data.access);
-    return data.access;
 }
 
-async function refreshToken() {
-    localStorage.removeItem("token");
-    return await setJwt();
+export function logout() {
+    const token = localStorage.getItem("token");
+    if (token !== null)
+        localStorage.removeItem("token");
 }
 
-
-export async function getCurrentUser() {
+export function getCurrentUser() {
     try {
         let token = localStorage.getItem("token");
-
-        if (!token) {
-            console.log("No token found");
-            return null;
-        }
-
-        let decodedToken = JwtDecode(token);
-        if (Date.now() >= decodedToken.exp * 1000) {
-            console.log("Token is expired");
-            token = await refreshToken();
-            console.log("new Token", token);
-            decodedToken = JwtDecode(token);
-        }
-        return decodedToken;
-
-    } catch (error) {
-        console.log("Error ocuured during get CurrentUser in authService", error);
+        return JwtDecode(token);
+    } catch (ex) {
         return null;
     }
 }
 
-
-export async function getJwt() {
-    let token = localStorage.getItem("token");
-    if (token) {
-        const decodedToken = JwtDecode(token);
-        if (Date.now() >= decodedToken.exp * 1000) {
-            token = await refreshToken();
-        }
+export function getJwt() {
+    try {
+        let token = localStorage.getItem("token");
+        return token;
+    } catch (ex) {
+        return null;
     }
-    else {
-        token = await setJwt();
-    }
-    return token;
 }
 

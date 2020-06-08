@@ -1,6 +1,5 @@
 from django.conf import settings
-from django.contrib.auth.models import User
-from django.http import HttpResponse, JsonResponse, Http404
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -24,7 +23,6 @@ def tweet_create_view(request, *args, **kwargs):
 def tweet_list_view(request, *args, **kwargs):
     qs = Tweet.objects.all()
     username = request.GET.get('username')
-    print(request.GET)
     if username is not None:
         qs = qs.filter(user__username__iexact=username)
     serializer = TweetSerializer(qs, many=True)

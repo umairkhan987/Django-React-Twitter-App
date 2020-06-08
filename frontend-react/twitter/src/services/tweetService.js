@@ -3,26 +3,25 @@ import http from "./httpService";
 
 const endPoint = "http://localhost:8000/api/tweets";
 
-
-// using axios third party to get list of tweets
-export async function getTweetsList() {
-    let data = await getCurrentUser();
-    const username = data && data['username'];
-    const response = http.get(endPoint, { params: { username: username } });
+export function getTweetsList() {
+    const data = getCurrentUser();
+    let response = null;
+    if (data !== null) {
+        response = http.get(endPoint, { params: { username: data.username } });
+    } else {
+        response = http.get(endPoint);
+    }
     return response;
 }
 
-// using axios third party to get list of tweets
-export async function createTweet(data) {
-    const token = await getJwt();
-    http.setJwt(token);
+export function createTweet(data) {
+    http.setJwt(getJwt());
     const response = http.post(endPoint + "/create", data);
     return response;
 }
 
 export async function tweetAction(data) {
-    const token = await getJwt();
-    http.setJwt(token);
+    http.setJwt(getJwt());
     const response = http.post(endPoint + "/action", data);
     return response;
 }
