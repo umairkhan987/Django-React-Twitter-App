@@ -2,6 +2,8 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
+from .models import Profile
+
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -25,3 +27,26 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         return user
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    first_name = serializers.CharField(required=False)
+    last_name = serializers.CharField(required=False)
+
+    class Meta:
+        model = Profile
+        fields = ('id', "location", "bio", "first_name", "last_name", "user")
+        extra_kwargs = {"first_name": {'write_only': True}, "last_name": {'write_only': True}}
+
+    def update(self, instance, validated_data):
+        first_name = validated_data.pop('first_name')
+        last_name = validated_data.pop('last_name')
+        user = instance.user
+        instance.location = validated_data.get('location', instance.location)
+        instance.bio = validated_data.get('bio', instance.bio)
+        user.first_name = first_name
+        user.last_name = last_name
+        user.save()
+        instance.save()
+        return instance
