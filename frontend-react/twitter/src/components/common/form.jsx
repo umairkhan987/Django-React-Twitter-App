@@ -67,6 +67,27 @@ class Form extends Component {
       />
     );
   }
+
+  renderTextArea(name, label) {
+    const { data, errors } = this.state;
+    return (
+      <div className="form-group">
+        <label htmlFor={name}>{label}</label>
+        <textarea
+          className="form-control"
+          name={name}
+          id={name}
+          rows="5"
+          col="5"
+          value={data[name]}
+          onChange={this.handleChange}
+        ></textarea>
+        {errors[name] && (
+          <div className="alert alert-danger">{errors[name]}</div>
+        )}
+      </div>
+    );
+  }
 }
 
 export default Form;

@@ -10,6 +10,8 @@ class TweetDetail extends Component {
 
   async componentDidMount() {
     const id = this.props.match.params.id;
+    if (isNaN(id)) return alert("'ID' is not integer.");
+
     try {
       const response = await tweetDetail(id);
       if (response.status === 200) {
@@ -24,6 +26,8 @@ class TweetDetail extends Component {
 
   async componentDidUpdate() {
     const id = this.props.match.params.id;
+    if (isNaN(id)) return alert("'ID' is not integer.");
+
     if (this.state.prevId !== id) {
       try {
         const response = await tweetDetail(id);

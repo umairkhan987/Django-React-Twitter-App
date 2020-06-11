@@ -7,7 +7,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 from accounts.models import Profile
 from accounts.serializers import MyTokenObtainPairSerializer, UserSerializer
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from .serializers import ProfileSerializer
 
 
@@ -36,25 +36,26 @@ def profile_detail_view(request, username, *args, **kwargs):
     try:
         qs = Profile.objects.filter(user__username=username)
         if not qs.exists():
-            return Response({"Error": "Profile Not Found"}, status=404)
+            return Response({"detail": "Profile Not Found"}, status=404)
         profile = qs.first()
         serializer = ProfileSerializer(profile, many=False)
         return Response(serializer.data, status=200)
     except Profile.DoesNotExist:
-        return Response({"Error": "Profile Not Found"}, status=404)
+        return Response({"detail": "Profile Not Found"}, status=404)
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_profile_view(request, *args, **kwargs):
     try:
         if not request.user.is_authenticated:
-            return Response({'Error': "Unauthorized Access"}, status=401)
+            return Response({'detail': "Unauthorized Access"}, status=401)
         user = request.user
         profile = user.profile
         serializer = ProfileSerializer(profile, many=False)
         return Response(serializer.data, status=200)
     except Profile.DoesNotExist:
-        return Response({"Error": "Profile Not Found"}, status=404)
+        return Response({"detail": "Profile Not Found"}, status=404)
 
 
 class ProfileView(APIView):
@@ -62,7 +63,7 @@ class ProfileView(APIView):
 
     def put(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return Response({'Error': "Unauthorized Access"}, status=401)
+            return Response({'detail': "Unauthorized Access"}, status=401)
         user = request.user
         profile = user.profile
         serializer = ProfileSerializer(instance=profile, data=request.data)

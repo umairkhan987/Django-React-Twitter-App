@@ -9,6 +9,7 @@ import SignupForm from './components/signupForm';
 import NotFound from './components/notFound';
 import { getCurrentUser } from './services/authService';
 import Logout from './components/logout';
+import ProfileForm from './components/profileForm';
 
 class App extends Component {
   state = {};
@@ -30,6 +31,7 @@ class App extends Component {
           <Switch>
             <Route path="/tweets/:id" component={TweetDetail} />
             {/* <Route path="/tweet-detail/:id" render={(props) => <TweetDetail {...props} />} /> */}
+            <Route path="/profile" component={ProfileForm} />
             <Route path="/login" component={LoginForm} />
             <Route path="/register" component={SignupForm} />
             <Route path="/logout" component={Logout} />
