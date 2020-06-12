@@ -31,6 +31,27 @@ class UserCreate(generics.CreateAPIView):
     permission_classes = (AllowAny,)
 
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def user_follow_view(request, username, *args, **kwargs):
+    me = request.user
+    another_user = User.objects.filter(username=username)
+    if me.username == username:
+        return Response({"followers": me.profile.all().count()}, status=200)
+    if not another_user.exists():
+        return Response({"detail": "User not found"}, status=404)
+    profile = another_user.first().profile
+    data = request.data or {}
+    action = data.get("action")
+    if action == "follow":
+        profile.followers.add(me)
+    elif action == "unfollow":
+        profile.followers.remove(me)
+    else:
+        pass
+    return Response({"followers": profile.followers.all().count()}, status=200)
+
+
 @api_view(['GET'])
 def profile_detail_view(request, username, *args, **kwargs):
     try:
@@ -48,8 +69,6 @@ def profile_detail_view(request, username, *args, **kwargs):
 @permission_classes([IsAuthenticated])
 def get_profile_view(request, *args, **kwargs):
     try:
-        if not request.user.is_authenticated:
-            return Response({'detail': "Unauthorized Access"}, status=401)
         user = request.user
         profile = user.profile
         serializer = ProfileSerializer(profile, many=False)
@@ -62,8 +81,6 @@ class ProfileView(APIView):
     permission_classes = [IsAuthenticated]
 
     def put(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return Response({'detail': "Unauthorized Access"}, status=401)
         user = request.user
         profile = user.profile
         serializer = ProfileSerializer(instance=profile, data=request.data)
@@ -78,7 +95,6 @@ class ProfileView(APIView):
     #     if serializer.is_valid(raise_exception=True):
     #         serializer.save(user=request.user)
     #         return Response(serializer.data, status=201)
-
 
 # class Login(views.APIView):
 #     def post(self, request, *args, **kwargs):

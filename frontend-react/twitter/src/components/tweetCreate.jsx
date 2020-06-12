@@ -28,6 +28,7 @@ class TweetCreate extends Component {
               name="content"
               rows="3"
               placeholder="Share your thought"
+              required
             ></textarea>
             <button type="submit" className="btn btn-primary mt-1">
               Tweet
