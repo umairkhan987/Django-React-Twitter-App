@@ -6,11 +6,15 @@ import { getTweetsList, createTweet } from "./../services/tweetService";
 class TweetList extends Component {
   state = {
     tweets: [],
+    nextUrl: null,
   };
 
   async componentDidMount() {
-    const { data: tweets } = await getTweetsList();
-    this.setState({ tweets });
+    const { data } = await getTweetsList();
+    this.setState({
+      tweets: data.results,
+      nextUrl: data.next,
+    });
   }
 
   // create new Tweet method
@@ -34,8 +38,18 @@ class TweetList extends Component {
     this.setState({ tweets: allTweets });
   };
 
+  handleLoadNext = async () => {
+    const { nextUrl, tweets } = this.state;
+    const { data } = await getTweetsList(nextUrl);
+    const newTweets = [...tweets].concat(data.results);
+    this.setState({
+      tweets: newTweets,
+      nextUrl: data.next,
+    });
+  };
+
   render() {
-    const { tweets } = this.state;
+    const { tweets, nextUrl } = this.state;
     return (
       <React.Fragment>
         <TweetCreate handleNewTweet={this.handleNewTweet} />
@@ -47,10 +61,19 @@ class TweetList extends Component {
                 tweet={item}
                 updateTweet={this.handleUpdateRetweet}
                 key={index}
+                className="col-12 col-md-10 mx-auto border rounded my-3 py-4"
                 hideLink
               />
             );
           })}
+          {nextUrl !== null && (
+            <button
+              className="btn btn-outline-primary col-md-10 mx-auto mb-4"
+              onClick={this.handleLoadNext}
+            >
+              Load Tweet
+            </button>
+          )}
         </div>
       </React.Fragment>
     );

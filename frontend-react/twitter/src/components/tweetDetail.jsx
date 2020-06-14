@@ -46,7 +46,11 @@ class TweetDetail extends Component {
     return (
       <React.Fragment>
         {this.state.tweet && (
-          <Tweet tweet={this.state.tweet} history={this.props.history} />
+          <Tweet
+            tweet={this.state.tweet}
+            history={this.props.history}
+            className="col-12 col-md-10 mx-auto border rounded my-3 py-4"
+          />
         )}
       </React.Fragment>
     );

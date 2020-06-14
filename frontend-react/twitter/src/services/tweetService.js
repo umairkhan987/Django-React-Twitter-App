@@ -1,17 +1,34 @@
 import { getJwt, getCurrentUser } from "./authService";
 import http from "./httpService";
 
-const endPoint = "http://localhost:8000/api/tweets";
+let endPoint = "http://localhost:8000/api/tweets";
 
-export function getTweetsList() {
+export function getTweetsList(nextUrl = null) {
+
     const data = getCurrentUser();
     let response = null;
+
+    if (nextUrl !== null && nextUrl !== undefined) {
+        endPoint = nextUrl;
+    }
+
     if (data !== null) {
-        response = http.get(endPoint, { params: { username: data.username } });
+        http.setJwt(getJwt());
+        response = http.get(endPoint + "/feed");
     } else {
         response = http.get(endPoint);
     }
     return response;
+}
+
+export function feedList(nextUrl = null) {
+    endPoint = endPoint + "/feed";
+    if (nextUrl !== null && nextUrl !== undefined) {
+        endPoint = nextUrl;
+    }
+
+    http.setJwt(getJwt());
+    return http.get(endPoint);
 }
 
 export function createTweet(data) {

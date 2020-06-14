@@ -5,6 +5,7 @@ import {
   getUserProfile,
   updateUserProfile,
 } from "./../services/profileService";
+import ProfileBadge from "./common/profileBadge";
 
 class ProfileForm extends Form {
   state = {
@@ -20,15 +21,20 @@ class ProfileForm extends Form {
   };
 
   async componentDidMount() {
+    console.log("componentDidMount");
     try {
-      const { data } = await getUserProfile();
-      const obj = {
-        first_name: data.user.first_name,
-        last_name: data.user.last_name,
-        location: data.location,
-        bio: data.bio,
-      };
-      this.setState({ data: obj });
+      getUserProfile().then(({ data }) => {
+        const obj = {
+          first_name: data.user.first_name || "",
+          last_name: data.user.last_name || "",
+          location: data.location || "",
+          bio: data.bio || "",
+        };
+        this.setState({ data: obj });
+      });
+
+      // // console.log(obj);
+      // this.setState({ data: obj });
     } catch (ex) {
       if (ex.response && ex.response.status === 401) {
         console.log(ex.response.data["detail"]);
@@ -53,10 +59,14 @@ class ProfileForm extends Form {
   };
 
   render() {
+    console.log("Render method");
+    const { data } = this.state;
+
+    console.log(data);
     return (
       <React.Fragment>
-        <h1 className="text-center">Profile Khan</h1>
-        <form onSubmit={this.handleSubmit}>
+        <ProfileBadge data={data} />
+        <form onSubmit={this.handleSubmit} className="pt-4">
           <div className="row justify-content-center">
             <div className="col-4">
               {this.renderInput("first_name", "First Name")}

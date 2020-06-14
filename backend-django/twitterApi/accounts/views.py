@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from accounts.models import Profile
-from accounts.serializers import MyTokenObtainPairSerializer, UserSerializer
+from accounts.serializers import MyTokenObtainPairSerializer, UserSerializer, PublicProfileSerializer
 from rest_framework.decorators import api_view, permission_classes
 from .serializers import ProfileSerializer
 
@@ -57,12 +57,13 @@ def profile_detail_view(request, username, *args, **kwargs):
     try:
         qs = Profile.objects.filter(user__username=username)
         if not qs.exists():
-            return Response({"detail": "Profile Not Found"}, status=404)
+            return Response({"detail": "User Not Found"}, status=404)
         profile = qs.first()
-        serializer = ProfileSerializer(profile, many=False)
+
+        serializer = PublicProfileSerializer(profile, many=False, context={"request": request})
         return Response(serializer.data, status=200)
     except Profile.DoesNotExist:
-        return Response({"detail": "Profile Not Found"}, status=404)
+        return Response({"detail": "User Not Found"}, status=404)
 
 
 @api_view(['GET'])
@@ -74,7 +75,7 @@ def get_profile_view(request, *args, **kwargs):
         serializer = ProfileSerializer(profile, many=False)
         return Response(serializer.data, status=200)
     except Profile.DoesNotExist:
-        return Response({"detail": "Profile Not Found"}, status=404)
+        return Response({"detail": "User Not Found"}, status=404)
 
 
 class ProfileView(APIView):

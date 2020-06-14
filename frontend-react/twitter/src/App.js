@@ -10,6 +10,7 @@ import NotFound from './components/notFound';
 import { getCurrentUser } from './services/authService';
 import Logout from './components/logout';
 import ProfileForm from './components/profileForm';
+import FeedTweet from './components/FeedTweet';
 
 class App extends Component {
   state = {};
@@ -29,6 +30,7 @@ class App extends Component {
         <div className="container">
           {/* <h1 className="text-center">Welcome to tweet me!</h1> */}
           <Switch>
+            <Route path="/tweets/feed" component={FeedTweet} />
             <Route path="/tweets/:id" component={TweetDetail} />
             {/* <Route path="/tweet-detail/:id" render={(props) => <TweetDetail {...props} />} /> */}
             <Route path="/profile" component={ProfileForm} />

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { tweetAction } from "../services/tweetService";
+import { UserPicture, UserDisplay } from "./profileComponenet";
 
 export const ActionBtn = (props) => {
   const { tweet, action, handleAction } = props;
@@ -18,24 +19,35 @@ export const ActionBtn = (props) => {
   );
 };
 
-const ParentTweet = ({ tweet, handleAction }) => {
+const ParentTweet = ({ tweet, handleAction, retweeter }) => {
   return tweet.parent ? (
-    <div className="col-11 mx-auto p-3 border rounded">
-      <p className="mb-0 text-muted small">Retweet</p>
-      <Tweet
-        hideActions
-        hideLink
-        tweet={tweet.parent}
-        handleAction={handleAction}
-      />
-    </div>
+    <Tweet
+      hideActions
+      hideLink
+      isRetweet
+      className={" "}
+      retweeter={retweeter}
+      tweet={tweet.parent}
+      handleAction={handleAction}
+    />
   ) : null;
 };
 
 // col-10 mx-auto col-md-6
 const Tweet = (props) => {
-  const { tweet, hideActions, updateTweet, hideLink } = props;
+  const {
+    tweet,
+    hideActions,
+    updateTweet,
+    hideLink,
+    isRetweet,
+    retweeter,
+  } = props;
   const [actionTweet, setActionTweet] = useState(tweet ? tweet : null);
+  let className =
+    isRetweet === true
+      ? `${props.className} p-2 border rounded`
+      : props.className;
 
   const handleAction = async (tweet, action) => {
     const obj = { action: action, id: tweet.id };
@@ -58,44 +70,62 @@ const Tweet = (props) => {
 
   // my-5 py-4 border bg-white text-dark
   return (
-    <div className="col-12 col-md-10 mx-auto border rounded my-3 py-4">
-      <div>
-        {hideLink === true ? (
-          <Link to={`/tweets/${tweet.id}`} style={{ textDecoration: "none" }}>
-            <p>
-              {tweet.id} - {tweet.content}
-            </p>
-          </Link>
-        ) : (
-          <p>
-            {tweet.id} - {tweet.content}{" "}
-          </p>
-        )}
-
-        <ParentTweet tweet={tweet} handleAction={handleAction} />
-      </div>
-      {hideActions !== true && (
-        <div className="btn btn-group">
-          <ActionBtn
-            tweet={actionTweet}
-            handleAction={handleAction}
-            action={{ type: "like", display: "Likes" }}
-            className="btn btn-primary"
-          />
-          <ActionBtn
-            tweet={actionTweet}
-            handleAction={handleAction}
-            action={{ type: "unlike", display: "Unlike" }}
-            className="btn btn-outline-primary"
-          />
-          <ActionBtn
-            tweet={actionTweet}
-            handleAction={handleAction}
-            action={{ type: "retweet", display: "Retweet" }}
-            className="btn btn-outline-success"
-          />
+    <div className={className}>
+      {isRetweet === true && (
+        <div className="mb-2">
+          <span className="small text-muted">
+            Retweet via <UserDisplay user={retweeter} />
+          </span>
         </div>
       )}
+      <div className="d-flex">
+        <UserPicture user={tweet.user} />
+        <div className="col-11">
+          <div>
+            <p>
+              <UserDisplay user={tweet.user} includeFullName />
+            </p>
+            <p>{tweet.content}</p>
+            <ParentTweet
+              tweet={tweet}
+              retweeter={tweet.user}
+              handleAction={handleAction}
+            />
+          </div>
+          <div className="btn btn-group px-0">
+            {hideActions !== true && (
+              <React.Fragment>
+                <ActionBtn
+                  tweet={actionTweet}
+                  handleAction={handleAction}
+                  action={{ type: "like", display: "Likes" }}
+                  className="btn btn-primary"
+                />
+                <ActionBtn
+                  tweet={actionTweet}
+                  handleAction={handleAction}
+                  action={{ type: "unlike", display: "Unlike" }}
+                  className="btn btn-outline-primary"
+                />
+                <ActionBtn
+                  tweet={actionTweet}
+                  handleAction={handleAction}
+                  action={{ type: "retweet", display: "Retweet" }}
+                  className="btn btn-outline-success"
+                />
+              </React.Fragment>
+            )}
+            {hideLink === true ? (
+              <Link
+                to={`/tweets/${tweet.id}`}
+                className="btn btn-outline-primary"
+              >
+                View
+              </Link>
+            ) : null}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
