@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 export const UserPicture = ({ user }) => {
   return (
     <div className="">
-      <Link to={`/profile/${user.username}`}>
+      <Link to={`/tweets/profile/${user.username}`}>
         <span className="mx-1 px-3 py-2 rounded-circle bg-dark text-white">
           {user.username[0]}
         </span>
@@ -20,7 +20,10 @@ export const UserDisplay = ({ user, includeFullName }) => {
   return (
     <React.Fragment>
       {displayName}
-      <Link to={`/profile/${user.username}`} style={{ textDecoration: "none" }}>
+      <Link
+        to={`/tweets/profile/${user.username}`}
+        style={{ textDecoration: "none" }}
+      >
         @{user.username}
       </Link>
     </React.Fragment>

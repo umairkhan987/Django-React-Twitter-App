@@ -1,0 +1,17 @@
+.profile-pic {
+  width: auto;
+  float: left;
+}
+
+.profile_info {
+  margin-top: -9px;
+  margin-left: -20px;
+}
+
+.card_height {
+  height: 100px;
+}
+
+.profile_color {
+  background-color: lightgray;
+}

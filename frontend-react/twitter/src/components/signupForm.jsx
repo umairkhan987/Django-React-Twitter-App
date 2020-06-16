@@ -3,6 +3,7 @@ import Form from "./common/form";
 import Joi from "joi-browser";
 import { Link } from "react-router-dom";
 import { register } from "./../services/userService";
+import { toast } from "react-toastify";
 
 class SignupForm extends Form {
   state = {
@@ -20,7 +21,10 @@ class SignupForm extends Form {
   doSubmit = async () => {
     try {
       const response = await register(this.state.data);
-      if (response.status === 201) this.props.history.push("/login");
+      if (response.status === 201) {
+        toast.success("Account create successfully.");
+        this.props.history.push("/login");
+      }
     } catch (ex) {
       if (ex.response && ex.response.status === 400) {
         const errors = { ...this.state.errors };

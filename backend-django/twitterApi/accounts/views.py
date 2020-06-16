@@ -47,9 +47,8 @@ def user_follow_view(request, username, *args, **kwargs):
         profile.followers.add(me)
     elif action == "unfollow":
         profile.followers.remove(me)
-    else:
-        pass
-    return Response({"followers": profile.followers.all().count()}, status=200)
+    serializer = PublicProfileSerializer(profile, many=False, context={"request": request})
+    return Response(serializer.data, status=200)
 
 
 @api_view(['GET'])
@@ -72,7 +71,7 @@ def get_profile_view(request, *args, **kwargs):
     try:
         user = request.user
         profile = user.profile
-        serializer = ProfileSerializer(profile, many=False)
+        serializer = PublicProfileSerializer(profile, many=False)
         return Response(serializer.data, status=200)
     except Profile.DoesNotExist:
         return Response({"detail": "User Not Found"}, status=404)
@@ -84,6 +83,8 @@ class ProfileView(APIView):
     def put(self, request, *args, **kwargs):
         user = request.user
         profile = user.profile
+        # print(request.data)
+        # return Response({"check": "just for testing"}, status=200)
         serializer = ProfileSerializer(instance=profile, data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()

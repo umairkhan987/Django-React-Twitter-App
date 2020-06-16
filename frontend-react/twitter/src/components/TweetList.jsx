@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Tweet from "./tweet";
 import TweetCreate from "./tweetCreate";
 import { getTweetsList, createTweet } from "./../services/tweetService";
+import { toast } from "react-toastify";
 
 class TweetList extends Component {
   state = {
@@ -27,6 +28,7 @@ class TweetList extends Component {
       this.setState({ tweets });
     } catch (ex) {
       if (ex.response && ex.response.status === 401) {
+        toast.error("you must login to post a tweet.");
         this.props.history.push("/login");
         console.clear();
       }

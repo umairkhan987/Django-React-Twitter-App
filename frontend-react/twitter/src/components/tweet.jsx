@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { tweetAction } from "../services/tweetService";
 import { UserPicture, UserDisplay } from "./profileComponenet";
+import { toast } from "react-toastify";
 
 export const ActionBtn = (props) => {
   const { tweet, action, handleAction } = props;
@@ -62,6 +63,7 @@ const Tweet = (props) => {
       }
     } catch (ex) {
       if (ex.response && ex.response.status === 401) {
+        toast.error("You must login to perform this action");
         props.history.push("/login");
         console.clear();
       }

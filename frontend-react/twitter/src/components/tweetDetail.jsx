@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { tweetDetail } from "../services/tweetService";
 import Tweet from "./tweet";
+import { toast } from "react-toastify";
 
 class TweetDetail extends Component {
   state = {
@@ -10,7 +11,7 @@ class TweetDetail extends Component {
 
   async componentDidMount() {
     const id = this.props.match.params.id;
-    if (isNaN(id)) return alert("'ID' is not integer.");
+    if (isNaN(id)) return toast.error("'ID' is not integer.");
 
     try {
       const response = await tweetDetail(id);
@@ -19,14 +20,14 @@ class TweetDetail extends Component {
       }
     } catch (ex) {
       if (ex.response && ex.response.status === 404) {
-        alert("Tweet is not found.");
+        toast.error("Tweet is not found.");
       }
     }
   }
 
   async componentDidUpdate() {
     const id = this.props.match.params.id;
-    if (isNaN(id)) return alert("'ID' is not integer.");
+    if (isNaN(id)) return toast.error("'ID' is not integer.");
 
     if (this.state.prevId !== id) {
       try {
@@ -36,7 +37,7 @@ class TweetDetail extends Component {
         }
       } catch (ex) {
         if (ex.response && ex.response.status === 404) {
-          alert("Tweet is not found.");
+          toast.error("Tweet is not found.");
         }
       }
     }

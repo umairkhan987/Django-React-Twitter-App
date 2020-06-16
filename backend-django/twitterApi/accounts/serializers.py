@@ -29,29 +29,6 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
-class ProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-    first_name = serializers.CharField(required=False)
-    last_name = serializers.CharField(required=False)
-
-    class Meta:
-        model = Profile
-        fields = ("id", "location", "bio", "first_name", "last_name", "user")
-        extra_kwargs = {"first_name": {'write_only': True}, "last_name": {'write_only': True}}
-
-    def update(self, instance, validated_data):
-        first_name = validated_data.pop('first_name')
-        last_name = validated_data.pop('last_name')
-        user = instance.user
-        instance.location = validated_data.get('location', instance.location)
-        instance.bio = validated_data.get('bio', instance.bio)
-        user.first_name = first_name
-        user.last_name = last_name
-        user.save()
-        instance.save()
-        return instance
-
-
 class PublicProfileSerializer(serializers.ModelSerializer):
     first_name = serializers.SerializerMethodField(read_only=True)
     last_name = serializers.SerializerMethodField(read_only=True)
@@ -87,3 +64,30 @@ class PublicProfileSerializer(serializers.ModelSerializer):
 
     def get_follower_count(self, obj):
         return obj.followers.count()
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    # user = UserSerializer(read_only=True)
+    # first_name = serializers.SerializerMethodField()
+    # last_name = serializers.SerializerMethodField()
+    profile = PublicProfileSerializer(source="user.profile", read_only=True)
+    first_name = serializers.CharField(required=False)
+    last_name = serializers.CharField(required=False)
+
+    class Meta:
+        model = Profile
+        fields = ("id", "location", "bio", "first_name", "last_name", "profile")
+        # extra_kwargs = {"first_name": {'write_only': True}, "last_name": {'write_only': True}}
+
+    def update(self, instance, validated_data):
+        first_name = validated_data.pop('first_name')
+        last_name = validated_data.pop('last_name')
+        user = instance.user
+        instance.location = validated_data.get('location', instance.location)
+        instance.bio = validated_data.get('bio', instance.bio)
+        user.first_name = first_name
+        user.last_name = last_name
+        user.save()
+        instance.save()
+        return instance
+
