@@ -19,7 +19,15 @@ export function logout() {
 export function getCurrentUser() {
     try {
         let token = localStorage.getItem("token");
-        return JwtDecode(token);
+        const user = JwtDecode(token);
+        if (user.exp * 1000 < Date.now()) {
+            logout();
+            window.location.href = '/login';
+            return null;
+        }
+        else {
+            return user;
+        }
     } catch (ex) {
         return null;
     }
